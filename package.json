@@ -1,0 +1,18 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@docker/node-sdk": "^0.0.17",
+    "@openai/realtime-api-beta": "github:soketlabs/openai-realtime-api-beta",
+    "dockerode": "^4.0.9",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.1",
+    "mongoose": "^9.0.1",
+    "plivo": "^4.69.2",
+    "tar-fs": "^3.1.1",
+    "uuid": "^13.0.0",
+    "ws": "^8.18.0"
+  },
+  "scripts": {
+    "start": "node ./app/agent_server.js"
+  }
+}
