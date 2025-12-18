@@ -1,8 +1,35 @@
-import { createAgent } from "../src/controllers/agent_service.js"; 
-// const agent_service = require("../src/controllers/agent_service");
-import { getContainerinfo } from "../src/utils/dockerUtilsDockerode.js";   
+import dotenv from 'dotenv';
+import path from 'path';
+// const scriptDir = import.meta.dirname;
 
-// const new_container = await createAgent(123, "123");
+dotenv.config({ path: path.resolve(import.meta.dirname, '../.env') });
+console.log("ENV PATH:", path.resolve(import.meta.dirname, '../.env'));
+
+
+// import { createAgent } from "../src/controllers/agent_service.js"; 
+// const agent_service = require("../src/controllers/agent_service");
+import { getContainerinfo, startExistingContainer, stopContainer, removeContainer } from "../src/utils/dockerUtilsDockerode.js";   
+import { createAgentService } from '../src/controllers/agent_service.js';
+
+const new_container = await createAgentService(
+    123, {
+    "data_config":{
+        "session_config": { 
+            "instructions": "You are a helpful assitant named John",
+            "voice": "felicity", 
+            "language": "en-US",
+            "turn_detection": { 
+                "type": "server_vad", 
+                "threshold": 0.2, 
+                "prefix_padding_ms": 1000 ,
+                "silence_duration_ms": 1000
+            }
+        },
+        "provider_config": {
+            "provider": "plivo"
+        }
+    }});
+console.log("New Container from test.mjs:", new_container);
 // // const containerInfo =await getContainerinfo('e73ecbb58727');
 // console.log("New Container from test.mjs:", new_container);
 // const containerInfo =await getContainerinfo(new_container.id);
@@ -13,7 +40,7 @@ import { getContainerinfo } from "../src/utils/dockerUtilsDockerode.js";
 // const portMapping = NetworkSettings.Ports['3389/tcp'];
 
 // console.log(portMapping ? portMapping[0].HostPort : null);
-const new_agent = await createAgent(123, {});
+// const new_agent = await createAgent(123, {});
 // console.log("New Agent from test.mjs:", new_agent);
 
 
@@ -35,3 +62,7 @@ const new_agent = await createAgent(123, {});
 //         }
 //     }
 // }
+// const agent = await startExistingContainer('b49db945cd6e');
+// console.log("Started Agent:", agent);
+// stopContainer('b49db945cd6e')
+// removeContainer('b166a69b0521')

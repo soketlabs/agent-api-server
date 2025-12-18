@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
-dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
+dotenv.config({ path: path.resolve(import.meta.dirname, '../../.env') });
 
 import express from 'express';
 import bodyParser from 'body-parser';

@@ -4,14 +4,16 @@ import fs from 'fs';
 import path from 'path';
 // import 'dotenv/config';// Import dotenv
 import dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
+const envFilePath = path.resolve(import.meta.dirname, '../../.env'); // Path to your .env file
+dotenv.config({ path: envFilePath });
 
 // Configuration
 const HOST_SOURCE_PATH = '/Users/SId/workspace/tensorstudio/test_telephony/sample_data2'; 
+// const HOST_SOURCE_PATH = process.env.HOST_DATA_DIR;
 const containerAppPath = process.env.CONTAINER_APP_PATH;
 const imageName = process.env.IMAGE_NAME;
 // const CONTAINER_NAME = 'test-telephony-container';
-const envFilePath = path.resolve(process.cwd(), '../../.env'); // Path to your .env file
+
 const containerPort = process.env.CONTAINER_PORT;
 
 
@@ -83,7 +85,7 @@ export async function getAgentInfo(containerId) {
         const containerInfo = await getContainerinfo(containerId);
         const portMapping = containerInfo.NetworkSettings.Ports[`${containerPort}/tcp`];
         const hostPort = portMapping ? portMapping[0].HostPort : null;
-        console.log(containerInfo.NetworkSettings);
+        // console.log(containerInfo.NetworkSettings);
         return {
             "ContainerId": containerId,
             "AgentName": containerInfo.Name,
@@ -94,5 +96,57 @@ export async function getAgentInfo(containerId) {
         throw error;
     }
 }
+
+export async function startExistingContainer(containerId) {
+    try {
+        const container = docker.getContainer(containerId);
+        const containerInfo = await getContainerinfo(containerId);
+        if (containerInfo.State.Running) {
+            console.log(`Container ${containerId} is already running.`);
+            return await getAgentInfo(containerId);
+        }
+        await container.start();
+        console.log(`Container ${containerId} started successfully.`);
+    } catch (error) {
+        console.error(`Error starting container ${containerId}:`, error);
+        throw error;
+    }
+}
+
+export async function stopContainer(containerId) {
+    try {
+        const container = docker.getContainer(containerId);
+        const containerInfo = await getContainerinfo(containerId);
+        if (!containerInfo.State.Running) {
+            console.log(`Container ${containerId} is already stopped.`);
+            return;
+        }
+        await container.stop();
+        console.log(`Container ${containerId} stopped successfully.`);
+    } catch (error) {
+        console.error(`Error stopping container ${containerId}:`, error);
+        throw error;
+    }
+}
+
+export async function removeContainer(containerId) {
+    try {
+        const container = docker.getContainer(containerId);
+        if (!container) {
+            console.log(`Container ${containerId} does not exist.`);
+            return;
+        }
+        const containerInfo = await getContainerinfo(containerId);
+        if (containerInfo.State.Running) {
+            await container.stop();
+            console.log(`Container ${containerId} stopped before removal.`);
+        }
+        await container.remove({ force: true });
+        console.log(`Container ${containerId} removed successfully.`);
+    } catch (error) {
+        console.error(`Error removing container ${containerId}:`, error);
+        throw error;
+    }
+}   
 
 // startContainerWithVolume();
