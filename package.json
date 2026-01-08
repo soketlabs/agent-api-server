@@ -13,6 +13,6 @@
     "ws": "^8.18.0"
   },
   "scripts": {
-    "start": "node ./app/agent_server.js"
+    "start": "node ./src/app/agent_server.js"
   }
 }
