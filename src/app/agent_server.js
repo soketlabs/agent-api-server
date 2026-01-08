@@ -10,7 +10,8 @@ import connectDB from '../utils/db.js';
 const app = express();
 const PORT = process.env.API_SERVER_PORT || 4008;
 
-// connectDB();
+const db = connectDB();
+// console.log(db.showCollections());
 
 // Middleware setup
 app.use(bodyParser.json());

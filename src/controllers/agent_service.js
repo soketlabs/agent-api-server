@@ -34,6 +34,19 @@ export const validate = (schema) => (req, res, next) => {
     if (!result.success) {
         return res.status(400).json({ errors: result.error.errors });
     }
-    req.body = result.data; // Use the validated/parsed data
+    req.body = result.data; 
     next();
 };
+export async function getAgentService(userId, agentId) {
+    // const agent = await Agent.findOne({ userId, uuid: agentId });
+    // return agent;
+    const container = await getContainerinfo(agentId);
+    return container;
+}
+export async function deleteAgentService(userId, agentId) {
+    const container = await getContainerinfo(agentId)
+    // const deletedAgent = await Agent.findOneAndDelete({ userId, uuid: agentId });
+    // return deletedAgent;
+
+}        
+ 
