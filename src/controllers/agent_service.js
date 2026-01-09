@@ -4,7 +4,7 @@ dotenv.config({ path: path.resolve(import.meta.dirname, '../../.env') });
 // dotenv.config();
 // import { AgentCreateRequestModel } from '../models.js'; 
 import { randomUUID } from "crypto";
-import {startContainerWithVolume, getAgentInfo, getContainerinfo} from "../utils/dockerUtilsDockerode.js";
+import {startContainerWithVolume, getAgentInfo, getContainerinfo, removeContainer} from "../utils/dockerUtilsDockerode.js";
 
 export async function createAgentService(userId, data) {
     const uuid = randomUUID();
@@ -42,6 +42,28 @@ export const validate = (schema) => (req, res, next) => {
     if (!result.success) {
         return res.status(400).json({ errors: result.error.errors });
     }
-    req.body = result.data; // Use the validated/parsed data
+    req.body = result.data; 
     next();
 };
+export async function getAgentService(userId, agentId) {
+    // const agent = await Agent.findOne({ userId, uuid: agentId });
+    // return agent;
+    const container = await getAgentInfo(agentId);
+    return container;
+}
+export async function deleteAgentService(userId, agentId) {
+    const container = await getAgentInfo(agentId);
+    if (container) {
+        try {
+            await removeContainer(container.ContainerId);
+            return { sucess: true,
+                message: `Agent ${agentId} deleted successfully` };
+        } catch (error) {
+            throw new Error(`Failed to delete agent ${agentId}: ${error.message}`);
+        }
+    }           
+    else {
+        return {sucess: false,
+            message: `Agent ${agentId} not found`};
+    }
+}

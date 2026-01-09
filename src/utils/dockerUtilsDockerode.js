@@ -86,8 +86,9 @@ export async function getAgentInfo(containerId) {
         const portMapping = containerInfo.NetworkSettings.Ports[`${containerPort}/tcp`];
         const hostPort = portMapping ? portMapping[0].HostPort : null;
         // console.log(containerInfo.NetworkSettings);
+        console.log(containerInfo.Id);
         return {
-            "ContainerId": containerId,
+            "ContainerId": containerInfo.Id,
             "AgentName": containerInfo.Name,
             "AgentPort": hostPort
         };

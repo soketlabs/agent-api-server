@@ -50,7 +50,16 @@ const UserSchema = new mongoose.Schema({
     password: String 
 });
 
+const ApiKeySchema = new mongoose.Schema({
+    key: { type: String, required: true, unique: true },
+    // client: { type: String },         
+    active: { type: Boolean, default: true },
 
+    // permissions: [{ type: String }],
+    // createdAt: { type: Date, default: Date.now }
+});
+
+export default mongoose.model("ApiKey", ApiKeySchema);
 
 export const Agent = mongoose.model("Agent", AgentSchema);
 export const User = mongoose.model("User", UserSchema);
